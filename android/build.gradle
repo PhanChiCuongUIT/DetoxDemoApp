@@ -12,20 +12,31 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
+        // AGP 8.2.1
+        classpath("com.android.tools.build:gradle:8.2.1")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
+// Cung cấp thư viện cho toàn bộ dự án (bao gồm cả Detox)
 allprojects {
     repositories {
         google()
         mavenCentral()
-        
-        // Fix lỗi Detox trên Windows bằng đường dẫn tuyệt đối
-        maven {
-            url(new File(rootProject.projectDir.parentFile, "node_modules/detox/android/detox"))
+        maven { url 'https://www.jitpack.io' }
+    }
+}
+
+// --- FIX QUAN TRỌNG: ÉP DETOX DÙNG CHUNG CẤU HÌNH VỚI APP ---
+// Đoạn này sửa lỗi "No attributes" bằng cách ép module con dùng compileSdkVersion 33
+subprojects { project ->
+    afterEvaluate {
+        if ((project.plugins.hasPlugin('android') || project.plugins.hasPlugin('android-library'))) {
+            android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+            }
         }
     }
 }

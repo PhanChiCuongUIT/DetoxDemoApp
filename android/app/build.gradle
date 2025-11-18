@@ -36,6 +36,12 @@ android {
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://www.jitpack.io' } 
+}
+
 dependencies {
     implementation "com.facebook.react:react-android"
     
@@ -43,13 +49,14 @@ dependencies {
         implementation("com.facebook.react:hermes-android")
     }
 
-    // Dependencies cần thiết cho Detox để chạy test.
-    def detoxVersion = "20.20.2"
-    androidTestImplementation("com.wix:detox:$detoxVersion")
+    // --- QUAY LẠI DÙNG CÁCH NÀY ---
+    // Vì bản 20.46.0 không có online, ta phải build từ source.
+    // Nhờ AGP 8.2.1 bạn đã cài, lần này nó sẽ tương thích.
+    androidTestImplementation project(path: ':detox')
+    
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
-

@@ -1,11 +1,20 @@
+// 1. Cung cấp plugin cho Detox (Bắt buộc)
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = 'DetoxDemoApp'
 
-// 1. Cấu hình Native Modules
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 
-// 2. Include app module
 include ':app'
+includeBuild('../node_modules/@react-native/gradle-plugin')
 
-// 3. Include React Native Gradle Plugin (BẮT BUỘC)
-// Sử dụng đường dẫn tuyệt đối để tránh lỗi "Included build does not exist" trên Windows
-includeBuild(new File(rootDir, "../node_modules/@react-native/gradle-plugin"))
+// 2. KẾT NỐI DETOX THỦ CÔNG (Đúng đường dẫn)
+include ':detox'
+// [SỬA TẠI ĐÂY]: Đổi 'Detox-android' thành 'android' để khớp với thực tế máy bạn
+project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android').getCanonicalFile()
