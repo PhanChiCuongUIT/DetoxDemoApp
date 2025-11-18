@@ -1,4 +1,11 @@
 rootProject.name = 'DetoxDemoApp'
+
+// 1. Cấu hình Native Modules
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
+// 2. Include app module
 include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
+
+// 3. Include React Native Gradle Plugin (BẮT BUỘC)
+// Sử dụng đường dẫn tuyệt đối để tránh lỗi "Included build does not exist" trên Windows
+includeBuild(new File(rootDir, "../node_modules/@react-native/gradle-plugin"))
