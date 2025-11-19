@@ -9,12 +9,12 @@
 <p align="center">
 <b>Gray box end-to-end testing và automation framework cho mobile apps.</b>
 </p>
-<!-- <p align="center">
+<p align="center">
 <img alt="Demo" src="demo/DetoxTesting.gif"/>
 </p>
-<h1></h1> -->
+<h1></h1>
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=xxxx">
+  <a href="https://www.youtube.com/watch?v=nJvJd1i8v48">
     ▶️ Xem video demo
   </a>
 </p>
