@@ -1,55 +1,76 @@
-# Hướng Dẫn Cài Đặt & Fix Lỗi: Detox E2E Testing trên Windows (React Native 0.74)
+# Hướng Dẫn Tích Hợp Detox E2E Testing (React Native 0.74 + Windows)
 
-Chào bạn, đây là tài liệu hướng dẫn chi tiết cách thiết lập và chạy **End-to-End (E2E) Testing** với **Detox** cho dự án React Native trên môi trường Windows.
+![Detox E2E Testing](https://user-images.githubusercontent.com/1921451/122608832-8e505c00-d095-11eb-9a32-9895f4577e22.png)
 
-Phiên bản này đã được **tinh chỉnh đặc biệt** để khắc phục các lỗi phổ biến về đường dẫn, phiên bản Gradle và xung đột Autolinking mà bạn thường gặp phải.
+> **Trạng thái:** ✅ Đã kiểm chứng hoạt động (Tested & Verified)
+> **Môi trường:** Windows 10/11
+> **Phiên bản:** React Native 0.74.3 | Detox 20.46.0 | Gradle 8.1.4 | SDK 33
 
-**Cấu hình thành công hiện tại:**
+Tài liệu này hướng dẫn chi tiết cách thiết lập môi trường kiểm thử tự động (End-to-End Testing) với **Detox** trên Windows, khắc phục triệt để các lỗi phổ biến về đường dẫn, phiên bản AGP và xung đột Autolinking.
 
-- **OS:** Windows 10/11
-- **React Native:** 0.74.3
-- **Detox:** 20.46.0 (Build từ mã nguồn)
-- **Android Gradle Plugin (AGP):** 8.1.4
-- **Android SDK:** Compile SDK 33, Target SDK 33
-- **Java:** JDK 17
+---
 
-## ✅ Bước 1: Cài Đặt Môi Trường (Prerequisites)
+## 🛠 1. Yêu Cầu Môi Trường (Prerequisites)
 
-Đảm bảo máy tính của bạn đã cài đặt đầy đủ:
+Hãy đảm bảo máy tính của bạn đã cài đặt đúng các phiên bản sau để tránh lỗi tương thích:
 
-- **Node.js (LTS)** & **JDK 17** (Bắt buộc cho RN 0.74+).
-- **Android Studio & SDK:**
-  - Cài đặt **Android SDK Platform 33 (Tiramisu)**.
-  - Cài đặt **Android SDK Build-Tools 33.0.0** (hoặc mới hơn).
-  - Thiết lập biến môi trường ANDROID_HOME trỏ tới thư mục SDK (thường là C:\\Users\\User\\AppData\\Local\\Android\\Sdk).
-  - Thêm %ANDROID_HOME%\\platform-tools và %ANDROID_HOME%\\emulator vào biến Path.
-- **Máy ảo (Emulator):**
-  - Tạo một máy ảo Android API 33 (ví dụ: Pixel_5_API_33).
-  - **Quan trọng:** Tên AVD trong cài đặt Detox phải khớp chính xác với tên máy ảo này.
+* **Node.js:** Phiên bản LTS (v18 trở lên).
+* **Java JDK:** Phiên bản **17** (Bắt buộc cho React Native 0.74+).
+* **Android Studio & SDK:**
+    * Android SDK Platform: **API 33 (Tiramisu)**.
+    * Android SDK Build-Tools: **33.0.0**.
+    * **Biến môi trường:**
+        * `ANDROID_HOME`: Trỏ tới thư mục SDK (VD: `C:\Users\TenBan\AppData\Local\Android\Sdk`).
+        * `Path`: Thêm `%ANDROID_HOME%\platform-tools` và `%ANDROID_HOME%\emulator`.
+* **Android Emulator:**
+    * Tạo máy ảo sử dụng API 33 (VD: `Pixel_5_API_33`).
+    * **Quan trọng:** Tên AVD trong file cài đặt Detox (`.detoxrc.js`) phải khớp chính xác với tên máy ảo này.
 
-## 🚀 Bước 2: Cấu Hình Dự Án (Phần Quan Trọng Nhất)
+---
 
-Để Detox hoạt động trơn tru trên Windows với phiên bản này, chúng ta cần thực hiện cấu hình **"Lai" (Hybrid)**: Tắt Autolinking tự động và Link thủ công.
+## ⚙️ 2. Cấu Hình Dự Án (Configuration)
 
-### 2.1. Tắt Autolinking cho Detox
+Chúng ta sử dụng chiến lược **"Lai" (Hybrid)**: Tắt tính năng tự động (Autolinking) của React Native cho Detox và thay thế bằng cấu hình thủ công để kiểm soát đường dẫn build.
 
-Tạo file **react-native.config.js** tại thư mục gốc dự án:
+### 2.1. Cài đặt thư viện
+Chạy lệnh sau tại thư mục gốc:
 
+```bash
+npm install detox@latest jest@^29.0.0 --save-dev
+```
+
+---
+
+### 2.2 Tắt Autolinking
+
+Tạo file react-native.config.js tại thư mục gốc dự án:
+
+```JavaScript
+
+
+// File: react-native.config.js
 module.exports = {
   dependencies: {
     'detox': {
       platforms: {
-        android: null, // tắt autolinking
+        android: null, // Vô hiệu hóa autolinking để tránh lỗi trùng lặp module
       },
     },
   },
 };
+```
+---
 
-### 2.2. Cấu hình android/settings.gradle
+### 2.3 Cấu hình android/settings.gradle
 
-Trỏ đường dẫn thủ công vào module Detox trong node_modules.
+Kết nối thủ công module Detox từ mã nguồn.
 
-// 1. Cung cấp Plugin  
+```Groovy
+
+
+// File: android/settings.gradle
+
+// 1. Cung cấp Plugin (Bắt buộc để Detox tự build)
 pluginManagement {
     repositories {
         google()
@@ -65,22 +86,27 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-// Kết nối thủ công module Detox
+// 2. KẾT NỐI DETOX THỦ CÔNG
 include ':detox'
-project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox').getCanonicalFile()// 2. KẾT NỐI MÃ NGUỒN DETOX  
-include ':detox'  
-// \[QUAN TRỌNG\]: Trỏ vào thư mục con 'detox' nằm trong 'android'  
-project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox').getCanonicalFile()  
+// Trỏ vào thư mục chứa build.gradle của thư viện Detox
+// LƯU Ý: Dùng getCanonicalFile() để tránh lỗi đường dẫn trên Windows
+project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox').getCanonicalFile()
+```
 
-### 2.3. Cấu hình android/build.gradle (Project Level)
+---
 
-Sử dụng AGP 8.1.4 để tương thích với SDK 33 và ép Detox dùng chung phiên bản SDK.
+### 2.4. Cấu hình android/build.gradle (Project Level)
 
+Sử dụng AGP 8.1.4 để hỗ trợ SDK 33 và ép buộc Detox dùng chung phiên bản SDK với App chính.
+
+```Groovy
+
+// File: android/build.gradle
 buildscript {
     ext {
         buildToolsVersion = "33.0.0"
         minSdkVersion = 23
-        compileSdkVersion = 33
+        compileSdkVersion = 33 
         targetSdkVersion = 33
         ndkVersion = "25.1.8937393"
         kotlinVersion = "1.9.23"
@@ -90,21 +116,23 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.1.4")  // Quan trọng: dùng 8.1.4 để hỗ trợ SDK 33
+        // Dùng bản 8.1.4 để tương thích với SDK 33
+        classpath("com.android.tools.build:gradle:8.1.4")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
+// Cung cấp thư viện cho toàn bộ project con
 allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://www.jitpack.io' }
+        maven { url '[https://www.jitpack.io](https://www.jitpack.io)' }
     }
 }
 
-// Ép tất cả subproject dùng SDK 33
+// --- QUAN TRỌNG: ÉP DETOX DÙNG SDK 33 ---
 subprojects { project ->
     afterEvaluate {
         if ((project.plugins.hasPlugin('android') || project.plugins.hasPlugin('android-library'))) {
@@ -115,172 +143,193 @@ subprojects { project ->
         }
     }
 }
+```
 
-### 2.4. Cấu hình android/app/build.gradle (App Level)
+---
 
-Thêm dependency Detox và chọn flavor full.
+### 2.5. Cấu hình android/app/build.gradle (App Level)
 
-// ... (phần plugins và android config giữ nguyên)  
-<br/>android {  
-// ...  
-defaultConfig {  
-// ...  
-testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"  
-<br/>// --- CHỌN PHIÊN BẢN FULL ĐỂ TRÁNH LỖI AMBIGUITY ---  
-missingDimensionStrategy "detox", "full"  
-}  
-// ...  
-}  
-<br/>dependencies {  
-// ... (các dependency khác của React Native)  
-<br/>// --- KẾT NỐI VỚI MODULE DETOX ---  
-androidTestImplementation project(path: ':detox')  
-<br/>androidTestImplementation 'androidx.test:runner:1.5.2'  
-androidTestImplementation 'androidx.test:rules:1.5.0'  
-androidTestImplementation 'androidx.test.ext:junit:1.1.5'  
-}  
-// ...  
+```Groovy
 
-### 2.5. File Test Runner DetoxTest.kt
+// File: android/app/build.gradle
 
-Tạo file Kotlin tại android/app/src/androidTest/java/com/detoxdemoapp/DetoxTest.kt:
+android {
+    // ...
+    defaultConfig {
+        // ...
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // Chọn flavor 'full' để tránh lỗi ambiguity
+        missingDimensionStrategy "detox", "full"
+    }
+}
 
-package com.detoxdemoapp  
-<br/>import com.wix.detox.Detox  
-import com.wix.detox.config.DetoxConfig  
-import org.junit.Rule  
-import org.junit.Test  
-import org.junit.runner.RunWith  
-import androidx.test.ext.junit.runners.AndroidJUnit4  
-import androidx.test.rule.ActivityTestRule  
-<br/>@RunWith(AndroidJUnit4::class)  
-class DetoxTest {  
-@get:Rule  
-val activityRule = ActivityTestRule(MainActivity::class.java, false, false)  
-<br/>@Test  
-fun runDetoxTests() {  
-val detoxConfig = DetoxConfig()  
-detoxConfig.idlePolicyConfig.masterTimeoutSec = 90  
-detoxConfig.idlePolicyConfig.idleResourceTimeoutSec = 60  
-<br/>if (BuildConfig.DEBUG) {  
-detoxConfig.rnContextLoadTimeoutSec = 180  
-} else {  
-detoxConfig.rnContextLoadTimeoutSec = 60  
-}  
-<br/>Detox.runTests(activityRule, detoxConfig)  
-}  
-}  
+dependencies {
+    // ... các dependency khác ...
 
-## 🧪 Bước 3: Cấu Hình Detox & Jest
+    // Kết nối với module Detox đã khai báo ở settings.gradle
+    androidTestImplementation project(path: ':detox') 
+    
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+}
+```
+
+---
+
+## 📝 3. Thiết Lập Test Runner & Kịch Bản
 
 ### 3.1. File .detoxrc.js
 
-/\*\* @type {Detox.DetoxConfig} \*/  
-module.exports = {  
-testRunner: {  
-\$0: 'jest',  
-args: {  
-config: 'e2e/jest.config.js',  
-\_: \['e2e'\],  
-},  
-},  
-apps: {  
-'android.debug': {  
-type: 'android.apk',  
-binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',  
-// Lệnh build cho Windows (không có ./)  
-build: 'cd android && gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..',  
-},  
-},  
-devices: {  
-emulator: {  
-type: 'android.emulator',  
-device: {  
-avdName: 'Pixel_5', // Tên máy ảo của bạn  
-},  
-},  
-},  
-configurations: {  
-'android.emu.debug': {  
-device: 'emulator',  
-app: 'android.debug',  
-},  
-},  
-};  
+Tạo file này ở thư mục gốc dự án.
 
-### 3.2. File e2e/jest.config.js
+```JavaScript
 
-module.exports = {  
-maxWorkers: 1,  
-testTimeout: 120000,  
-testRegex: '\\\\.e2e\\\\.js\$', // Chỉ chạy các file .e2e.js  
-reporters: \['detox/runners/jest/reporter'\],  
-verbose: true,  
-globalSetup: 'detox/runners/jest/globalSetup',  
-globalTeardown: 'detox/runners/jest/globalTeardown',  
-testEnvironment: 'detox/runners/jest/testEnvironment',  
-};  
 
-## 🏃 Bước 4: Chạy Test
+/** @type {Detox.DetoxConfig} */
+module.exports = {
+  testRunner: {
+    $0: 'jest',
+    args: {
+      config: 'e2e/jest.config.js',
+      _: ['e2e'],
+    },
+  },
+  apps: {
+    'android.debug': {
+      type: 'android.apk',
+      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
+      // Lệnh build dành cho Windows (PowerShell)
+      build: 'cd android && gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..',
+    },
+  },
+  devices: {
+    emulator: {
+      type: 'android.emulator',
+      device: {
+        avdName: 'Pixel_5', // Sửa tên này khớp với tên máy ảo trong Android Studio của bạn
+      },
+    },
+  },
+  configurations: {
+    'android.emu.debug': {
+      device: 'emulator',
+      app: 'android.debug',
+    },
+  },
+};
+```
 
-### 4.1. Build Ứng Dụng
+---
 
-Mở Terminal, chạy lệnh sau để build sạch sẽ:
+### 3.2. Tạo Test Runner (Kotlin)
 
-cd android  
-./gradlew clean  
-cd ..  
-detox build -c android.emu.debug  
+Tạo file theo đường dẫn: android/app/src/androidTest/java/com/detoxdemoapp/DetoxTest.kt
 
-_(Chờ đến khi báo BUILD SUCCESSFUL)._
+```Kotlin
 
-### 4.2. Khắc phục lỗi "Test Failed: View is not visible"
+package com.detoxdemoapp
 
-Trước khi chạy test, hãy đảm bảo:
+import com.wix.detox.Detox
+import com.wix.detox.config.DetoxConfig
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
 
-- **Tắt Google Smart Lock:** Vào Settings của máy ảo -> Google -> Autofill -> Tắt "Autofill with Google". (Để tránh popup che màn hình).
-- **Tắt bàn phím ảo:** Vào Settings -> System -> Keyboard -> Tắt "On-screen keyboard" (nếu cần).
+@RunWith(AndroidJUnit4::class)
+class DetoxTest {
+    @get:Rule
+    val activityRule = ActivityTestRule(MainActivity::class.java, false, false)
 
-### 4.3. Chạy Metro & Test
+    @Test
+    fun runDetoxTests() {
+        val detoxConfig = DetoxConfig()
+        detoxConfig.idlePolicyConfig.masterTimeoutSec = 90
+        detoxConfig.idlePolicyConfig.idleResourceTimeoutSec = 60
+        
+        if (BuildConfig.DEBUG) {
+            detoxConfig.rnContextLoadTimeoutSec = 180
+        } else {
+            detoxConfig.rnContextLoadTimeoutSec = 60
+        }
 
-- Mở Terminal 1: npx react-native start --reset-cache
-- Mở Terminal 2: detox test -c android.emu.debug
+        Detox.runTests(activityRule, detoxConfig)
+    }
+}
+```
 
-## 📚 Phụ Lục: Kịch Bản Test Mẫu (login.e2e.js)
+---
 
-File test bao gồm 4 kịch bản: Đăng nhập thành công, thất bại, đăng xuất và validate input.
+## ▶️ 4. Chạy Test
 
-describe('Login Flow', () => {  
-beforeAll(async () => {  
-await device.launchApp();  
-});  
-<br/>beforeEach(async () => {  
-await device.reloadReactNative();  
-});  
-<br/>it('should show home screen after successful login', async () => {  
-await expect(element(by.id('email-input'))).toBeVisible();  
-await element(by.id('email-input')).typeText('<test@detox.com>');  
-await expect(element(by.id('password-input'))).toBeVisible();  
-await element(by.id('password-input')).typeText('password123');  
-await element(by.id('login-button')).tap();  
-await expect(element(by.id('home-screen'))).toBeVisible();  
-});  
-<br/>it('should show an error message for failed login', async () => {  
-await element(by.id('email-input')).typeText('<wrong@email.com>');  
-await element(by.id('password-input')).typeText('wrongpassword');  
-await element(by.id('login-button')).tap();  
-await expect(element(by.id('error-message'))).toBeVisible();  
-});  
-<br/>it('should logout successfully', async () => {  
-await element(by.id('email-input')).typeText('<test@detox.com>');  
-await element(by.id('password-input')).typeText('password123');  
-await element(by.id('login-button')).tap();  
-await expect(element(by.id('home-screen'))).toBeVisible();  
-await element(by.id('logout-button')).tap();  
-await expect(element(by.id('login-screen'))).toBeVisible();  
-});  
-<br/>it('should show error when inputs are empty', async () => {  
-await element(by.id('login-button')).tap();  
-await expect(element(by.id('error-message'))).toBeVisible();  
-});  
+### Bước 1: Build ứng dụng
+
+Mở Terminal (PowerShell) và chạy lệnh sau để đảm bảo mọi thứ được biên dịch sạch sẽ:
+
+```PowerShell
+
+cd android
+./gradlew clean
+cd ..
+detox build -c android.emu.debug
+```
+
+(Chờ đến khi báo BUILD SUCCESSFUL).
+
+---
+
+### Bước 2: Chuẩn bị Máy Ảo (Fix lỗi "View not visible")
+
+Trước khi chạy test, hãy vào máy ảo Android:
+Vào Settings > Google > Autofill > Tắt Autofill with Google (để tránh popup lưu mật khẩu che khuất app).
+Vào Settings > System > Keyboard > Tắt On-screen keyboard (nếu cần).
+
+---
+
+### Bước 3: Chạy Metro & Test
+
+Mở một cửa sổ Terminal khác:
+```PowerShell
+npx react-native start --reset-cache
+```
+
+Quay lại Terminal cũ và ra lệnh test:
+```PowerShell
+detox test -c android.emu.debug
+```
+
+---
+
+## 📚 Phụ Lục: Kịch Bản Test Mẫu (e2e/login.e2e.js)
+
+```JavaScript
+
+
+describe('Login Flow', () => {
+  beforeAll(async () => {
+    await device.launchApp();
+  });
+
+  beforeEach(async () => {
+    await device.reloadReactNative();
+  });
+
+  it('should show home screen after successful login', async () => {
+    await expect(element(by.id('email-input'))).toBeVisible();
+    await element(by.id('email-input')).typeText('test@detox.com');
+    await expect(element(by.id('password-input'))).toBeVisible();
+    await element(by.id('password-input')).typeText('password123');
+    await element(by.id('login-button')).tap();
+    await expect(element(by.id('home-screen'))).toBeVisible();
+  });
+
+  it('should show an error message for failed login', async () => {
+    await element(by.id('email-input')).typeText('wrong@email.com');
+    await element(by.id('password-input')).typeText('wrongpassword');
+    await element(by.id('login-button')).tap();
+    await expect(element(by.id('error-message'))).toBeVisible();
+  });
 });
+```
