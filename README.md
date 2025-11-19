@@ -9,6 +9,9 @@
 <p align="center">
 <b>Gray box end-to-end testing và automation framework cho mobile apps.</b>
 </p>
+<p align="center">
+  <video src="demo/DetoxTesting.mp4" width="500" autoplay loop muted></video>
+</p>
 
 > **Trạng thái:** ✅ Đã kiểm chứng hoạt động (Tested & Verified)
 > **Môi trường:** Windows 10/11
