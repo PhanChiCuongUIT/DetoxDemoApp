@@ -1,10 +1,14 @@
 # Hướng Dẫn Tích Hợp Detox E2E Testing (React Native 0.74 + Windows)
 
-![Detox E2E Testing](https://wix.github.io/Detox/)
 <p align="center">
-  <img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
+  <img alt="Detox" width=300 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
 </p>
 <h1 align="center">
+  Detox
+</h1>
+<p align="center">
+<b>Gray box end-to-end testing và automation framework cho mobile apps.</b>
+</p>
 
 > **Trạng thái:** ✅ Đã kiểm chứng hoạt động (Tested & Verified)
 > **Môi trường:** Windows 10/11
