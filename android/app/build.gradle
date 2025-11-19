@@ -15,6 +15,9 @@ android {
         versionName "1.0"
         // Cấu hình test instrumentation runner cho Detox
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // --- THÊM DÒNG NÀY ĐỂ CHỌN PHIÊN BẢN DETOX ---
+        missingDimensionStrategy "detox", "full"
     }
     signingConfigs {
         debug {

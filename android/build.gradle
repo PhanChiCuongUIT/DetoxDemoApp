@@ -1,8 +1,9 @@
 buildscript {
     ext {
+        // GIỮ SDK 33 NHƯ Ý BẠN MUỐN
         buildToolsVersion = "33.0.0"
         minSdkVersion = 23
-        compileSdkVersion = 33
+        compileSdkVersion = 33 
         targetSdkVersion = 33
         ndkVersion = "25.1.8937393"
         kotlinVersion = "1.9.23"
@@ -12,14 +13,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // AGP 8.2.1
-        classpath("com.android.tools.build:gradle:8.2.1")
+        // HẠ CẤP XUỐNG 8.1.4 (Bản này cho phép dùng SDK 33)
+        classpath("com.android.tools.build:gradle:8.1.4")
+        
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
-// Cung cấp thư viện cho toàn bộ dự án (bao gồm cả Detox)
+// Cung cấp thư viện cho Detox
 allprojects {
     repositories {
         google()
@@ -28,8 +30,7 @@ allprojects {
     }
 }
 
-// --- FIX QUAN TRỌNG: ÉP DETOX DÙNG CHUNG CẤU HÌNH VỚI APP ---
-// Đoạn này sửa lỗi "No attributes" bằng cách ép module con dùng compileSdkVersion 33
+// --- ÉP DETOX CHẠY THEO SDK 33 CỦA BẠN ---
 subprojects { project ->
     afterEvaluate {
         if ((project.plugins.hasPlugin('android') || project.plugins.hasPlugin('android-library'))) {

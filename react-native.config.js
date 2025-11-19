@@ -1,6 +1,6 @@
 module.exports = {
   dependencies: {
-    'detox': {
+    detox: {
       platforms: {
         android: null, // TẮT HOÀN TOÀN autolinking cho Detox
       },

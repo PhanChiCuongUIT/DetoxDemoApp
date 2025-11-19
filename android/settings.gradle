@@ -1,4 +1,4 @@
-// 1. Cung cấp plugin cho Detox (Bắt buộc)
+// 1. Cung cấp Plugin
 pluginManagement {
     repositories {
         google()
@@ -14,7 +14,8 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-// 2. KẾT NỐI DETOX THỦ CÔNG (Đúng đường dẫn)
+// 2. KẾT NỐI ĐÚNG MODULE
 include ':detox'
-// [SỬA TẠI ĐÂY]: Đổi 'Detox-android' thành 'android' để khớp với thực tế máy bạn
-project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android').getCanonicalFile()
+// [QUAN TRỌNG]: Phải trỏ vào '.../detox/android/detox' (Thư mục con)
+// Vì file build.gradle của thư viện nằm ở đó.
+project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox').getCanonicalFile()

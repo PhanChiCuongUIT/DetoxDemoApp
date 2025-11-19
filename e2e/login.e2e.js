@@ -72,4 +72,42 @@ describe('Login Flow', () => {
     //    Điều này xác nhận ứng dụng không điều hướng sai luồng.
     await expect(element(by.id('home-screen'))).not.toBeVisible();
   });
+
+  /**
+   * KỊCH BẢN 3: ĐĂNG XUẤT
+   * Mô tả: Kiểm tra xem người dùng có thể quay lại màn hình đăng nhập
+   * sau khi đã vào màn hình chính hay không.
+   */
+  it('should logout successfully', async () => {
+    // B1: Phải đăng nhập thành công trước
+    await element(by.id('email-input')).typeText('test@detox.com');
+    await element(by.id('password-input')).typeText('password123');
+    await element(by.id('login-button')).tap();
+
+    // B2: Đảm bảo đang ở màn hình Home
+    await expect(element(by.id('home-screen'))).toBeVisible();
+
+    // B3: Nhấn nút Logout (testID="logout-button" trong HomeScreen.tsx)
+    await element(by.id('logout-button')).tap();
+
+    // B4: Kỳ vọng quay lại màn hình Login (testID="login-screen" trong LoginScreen.tsx)
+    await expect(element(by.id('login-screen'))).toBeVisible();
+  });
+
+  /**
+   * KỊCH BẢN 4: BỎ TRỐNG THÔNG TIN
+   * Mô tả: Kiểm tra khi người dùng không nhập gì mà bấm Login.
+   */
+  it('should show error when inputs are empty', async () => {
+    // 1. Không nhập gì cả, bấm Login luôn
+    await element(by.id('login-button')).tap();
+
+    // 2. Kỳ vọng thông báo lỗi xuất hiện
+    await expect(element(by.id('error-message'))).toBeVisible();
+
+    // 3. Kiểm tra nội dung lỗi (Optional - kỹ hơn)
+    await expect(
+      element(by.text('Invalid email or password. Please try again.')),
+    ).toBeVisible();
+  });
 });
