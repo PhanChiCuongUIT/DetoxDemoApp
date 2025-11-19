@@ -1,6 +1,6 @@
 # Hướng Dẫn Tích Hợp Detox E2E Testing (React Native 0.74 + Windows)
 
-![Detox E2E Testing](https://user-images.githubusercontent.com/1921451/122608832-8e505c00-d095-11eb-9a32-9895f4577e22.png)
+![Detox E2E Testing](https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png)
 
 > **Trạng thái:** ✅ Đã kiểm chứng hoạt động (Tested & Verified)
 > **Môi trường:** Windows 10/11
