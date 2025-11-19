@@ -1,18 +1,21 @@
 # Hướng Dẫn Tích Hợp Detox E2E Testing (React Native 0.74 + Windows)
 
-![Detox E2E Testing](https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png)
+![Detox E2E Testing](<p align="center">
+  <img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
+</p>
+<h1 align="center">)
 
 > **Trạng thái:** ✅ Đã kiểm chứng hoạt động (Tested & Verified)
 > **Môi trường:** Windows 10/11
 > **Phiên bản:** React Native 0.74.3 | Detox 20.46.0 | Gradle 8.1.4 | SDK 33
 
-Tài liệu này hướng dẫn chi tiết cách thiết lập môi trường kiểm thử tự động (End-to-End Testing) với **Detox** trên Windows, khắc phục triệt để các lỗi phổ biến về đường dẫn, phiên bản AGP và xung đột Autolinking.
+Dưới đây là hướng dẫn chi tiết cách thiết lập môi trường kiểm thử tự động (End-to-End Testing) với **Detox** trên Windows, khắc phục triệt để các lỗi phổ biến về đường dẫn, phiên bản AGP và xung đột Autolinking.
 
 ---
 
 ## 🛠 1. Yêu Cầu Môi Trường (Prerequisites)
 
-Hãy đảm bảo máy tính của bạn đã cài đặt đúng các phiên bản sau để tránh lỗi tương thích:
+Hãy đảm bảo máy tính đã cài đặt đúng các phiên bản sau để tránh lỗi tương thích:
 
 * **Node.js:** Phiên bản LTS (v18 trở lên).
 * **Java JDK:** Phiên bản **17** (Bắt buộc cho React Native 0.74+).
@@ -30,7 +33,7 @@ Hãy đảm bảo máy tính của bạn đã cài đặt đúng các phiên b�
 
 ## ⚙️ 2. Cấu Hình Dự Án (Configuration)
 
-Chúng ta sử dụng chiến lược **"Lai" (Hybrid)**: Tắt tính năng tự động (Autolinking) của React Native cho Detox và thay thế bằng cấu hình thủ công để kiểm soát đường dẫn build.
+Sử dụng chiến lược **"Lai" (Hybrid)**: Tắt tính năng tự động (Autolinking) của React Native cho Detox và thay thế bằng cấu hình thủ công để kiểm soát đường dẫn build.
 
 ### 2.1. Cài đặt thư viện
 Chạy lệnh sau tại thư mục gốc:
